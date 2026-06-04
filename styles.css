@@ -1,0 +1,198 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, #da69c7 0%, #7f0592 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #4a4a4a;
+    padding: 20px;
+    overflow: hidden;
+}
+
+/* === O CARD BRANCO PRINCIPAL === */
+.container {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden; /* Corta os corações para eles não vazarem do cartão */
+}
+
+/* === CAMADA DO MEIO: ONDE OS CORAÇÕES IRÃO SUBIR === */
+.fundo-coracoes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1; /* Fica atrás do conteúdo */
+}
+
+.coracao-foto {
+    position: absolute;
+    bottom: -350px; 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    /* REMOVIDO A COR VERMELHA DE FUNDO PARA EVITAR BUGS */
+    background-color: transparent; 
+    
+    /* Máscara em formato de coração */
+    -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>');
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>');
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+
+    animation: subirFlutuando linear infinite;
+    opacity: 0.95; 
+}
+
+/* === CAMADA DA FRENTE DA TELA: TODAS AS LETRAS === */
+.conteudo-letras {
+    position: relative;
+    z-index: 10; /* VALOR ALTO: Força absolutamente TUDO aqui dentro a ficar na frente dos corações */
+}
+
+.header h1 {
+    font-family: 'Great Vibes', cursive;
+    font-size: 3.5rem;
+    color: #d11a2a;
+    margin-bottom: 10px;
+}
+
+.header p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #666;
+}
+
+.counter-section {
+    margin: 40px 0;
+}
+
+.counter-section h2 {
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+#counter {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.time-box {
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    width: 22%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #ffe6e6;
+}
+
+.time-box span {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #d11a2a;
+}
+
+.time-box p {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #888;
+    margin-top: 5px;
+}
+
+.question-section h2 {
+    font-size: 1.3rem;
+    margin-bottom: 25px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    height: 60px;
+    position: relative;
+}
+
+button {
+    padding: 12px 35px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#btn-sim {
+    background-color: #d11a2a;
+    color: white;
+    box-shadow: 0 4px 15px rgba(209, 26, 42, 0.3);
+}
+
+#btn-sim:hover {
+    background-color: #b01422;
+    transform: scale(1.05);
+}
+
+#btn-nao {
+    background-color: #999;
+    color: white;
+    position: absolute;
+    right: 30%;
+}
+
+.hidden {
+    display: none;
+}
+
+#mensagem-sucesso {
+    margin-top: 25px;
+    font-size: 1.2rem;
+    color: #27ae60;
+    font-weight: 600;
+    animation: aparecer 0.5s ease forwards;
+}
+
+@keyframes subirFlutuando {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    100% {
+        transform: translateY(-130vh) rotate(15deg);
+    }
+}
+
+@keyframes aparecer {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+    .header h1 { font-size: 2.8rem; }
+    .time-box span { font-size: 1.3rem; }
+    .buttons { flex-direction: column; align-items: center; gap: 10px; height: auto; }
+    #btn-nao { position: static; }
+}

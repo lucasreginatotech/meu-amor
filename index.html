@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosso Amor 💖</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <main class="container">
+        <div class="conteudo-letras">
+            <header class="header">
+                <h1>Para o Amor da Minha Vida</h1>
+                <p>Cada segundo ao seu lado é um presente. Obrigado por ser quem você é.</p>
+            </header>
+
+            <section class="counter-section">
+                <h2>Estamos juntos há:</h2>
+                <div id="counter">
+                    <div class="time-box"><span id="days">00</span><p>Dias</p></div>
+                    <div class="time-box"><span id="hours">00</span><p>Horas</p></div>
+                    <div class="time-box"><span id="minutes">00</span><p>Minutos</p></div>
+                    <div class="time-box"><span id="seconds">00</span><p>Segundos</p></div>
+                </div>
+            </section>
+
+            <section class="question-section">
+                <h2>Quer namorar comigo para sempre?</h2>
+                <div class="buttons">
+                    <button id="btn-sim" onclick="aceitou()">SIM!</button>
+                    <button id="btn-nao" onmouseover="fuga()" onclick="fuga()">NÃO</button>
+                </div>
+                <p id="mensagem-sucesso" class="hidden">Eu já sabia! Te amo infinitamente! Nicolly 💖✨</p>
+            </section>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
