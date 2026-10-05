@@ -267,6 +267,11 @@ const loveAudio = byId('love-audio');
 const musicButtons = [byId('music-toggle'), byId('dock-music-toggle'), byId('album-music-toggle')];
 const musicSource = window.siteMusic?.src;
 let hasMusicStarted = false;
+function skipMusicIntro() {
+  const startAt = window.siteMusic?.startAt;
+  if (loveAudio.readyState < 1 || !Number.isFinite(startAt) || startAt <= 0 || startAt >= loveAudio.duration) return;
+  if (loveAudio.currentTime < startAt) loveAudio.currentTime = startAt;
+}
 function clearMusicGestureListeners() {
   document.removeEventListener('click', startMusicOnGesture, true);
   document.removeEventListener('keydown', startMusicOnGesture, true);
@@ -283,7 +288,10 @@ function updateMusicControls() {
   if (playing) byId('music-status').hidden = true;
 }
 async function startMusic() {
-  try { await loveAudio.play(); }
+  try {
+    skipMusicIntro();
+    await loveAudio.play();
+  }
   catch (error) {
     if (hasMusicStarted) return;
     byId('music-status').textContent = error.name === 'NotAllowedError'
@@ -308,6 +316,8 @@ async function toggleMusic() {
   await startMusic();
 }
 if (typeof musicSource === 'string' && musicSource) {
+  loveAudio.addEventListener('loadedmetadata', skipMusicIntro);
+  loveAudio.addEventListener('timeupdate', skipMusicIntro);
   loveAudio.src = musicSource;
   const configuredVolume = window.siteMusic.volume;
   loveAudio.volume = typeof configuredVolume === 'number' && Number.isFinite(configuredVolume) ? Math.min(1, Math.max(0, configuredVolume)) : .30;
