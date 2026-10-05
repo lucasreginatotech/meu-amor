@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 // Data original da história, com o fuso de São Paulo explícito.
 const dataInicio = new Date('2024-10-10T20:40:00-03:00');
 // Uma única lista alimenta o álbum, a colagem e as comemorações.
@@ -158,33 +158,75 @@ document.querySelectorAll('[data-love-note]').forEach((button) => {
     document.querySelectorAll('[data-love-note]').forEach((option) => option.setAttribute('aria-pressed', String(option === button)));
   });
 });
-const affectionCoupons = [
-  ['Um abraço sem pressa', 'Daqueles em que a gente esquece o relógio e fica só mais um pouquinho.'],
-  ['Cinema com seu par favorito', 'Você escolhe o filme. Eu cuido da companhia e divido a pipoca.'],
-  ['Um encontro pra chamar de nosso', 'Vamos escolher juntos um lugar e arrumar mais uma lembrança boa pro álbum.'],
-  ['Beijo na testa + cafuné', 'Um combo de carinho pra deixar um dia comum mais gostoso.'],
-  ['Uma foto bem boba juntos', 'Vale careta, risada e uma tentativa fracassada de fazer pose séria.'],
-  ['Você escolhe a próxima música', 'Eu fico com a melhor parte: ouvir juntinho de você.'],
-  ['Um passeio de mãos dadas', 'Sem roteiro complicado. Um tempinho só pra conversar e estar perto.'],
-  ['Seu pedido de carinho', 'Me conta um carinho que você gostaria de receber e a gente combina. ♡']
-];
-let couponBag = [];
-let lastCoupon = -1;
-byId('draw-coupon').addEventListener('click', () => {
-  if (!couponBag.length) {
-    couponBag = affectionCoupons.map((_, index) => index);
-    for (let i = couponBag.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [couponBag[i], couponBag[j]] = [couponBag[j], couponBag[i]];
-    }
-    if (couponBag[couponBag.length - 1] === lastCoupon) [couponBag[0], couponBag[couponBag.length - 1]] = [couponBag[couponBag.length - 1], couponBag[0]];
+const pairBoard = byId('pair-board');
+let firstPairCard = null;
+let pairTimeout = null;
+let foundPairs = 0;
+let pairAttempts = 0;
+function revealPairCard(card, revealed) {
+  card.classList.toggle('turned', revealed);
+  card.querySelector('img').hidden = !revealed;
+  card.querySelector('span').hidden = revealed;
+  card.setAttribute('aria-pressed', String(revealed));
+  card.setAttribute('aria-label', revealed ? `${memories[Number(card.dataset.memory)].caption}${card.classList.contains('matched') ? ', par encontrado' : ''}` : `Virar cartinha ${card.dataset.slot}`);
+}
+function choosePairCard(card) {
+  if (pairTimeout !== null || card.classList.contains('turned')) return;
+  revealPairCard(card, true);
+  if (!firstPairCard) { firstPairCard = card; return; }
+  const previousCard = firstPairCard;
+  firstPairCard = null;
+  pairAttempts++;
+  if (previousCard.dataset.memory === card.dataset.memory) {
+    [previousCard, card].forEach((matchedCard) => {
+      matchedCard.classList.add('matched');
+      matchedCard.setAttribute('aria-disabled', 'true');
+      revealPairCard(matchedCard, true);
+    });
+    foundPairs++;
+    byId('pair-message').textContent = foundPairs === 3
+      ? `Você achou todos em ${pairAttempts} tentativas! Entre tantas pessoas no mundo, meu par favorito continua sendo você, Nicolly. ♡`
+      : `${foundPairs} de 3 pares · Mais uma lembrança nossa juntinha!`;
+    if (foundPairs === 3) celebrate(true);
+    return;
   }
-  lastCoupon = couponBag.pop();
-  byId('coupon-title').textContent = affectionCoupons[lastCoupon][0];
-  byId('coupon-description').textContent = affectionCoupons[lastCoupon][1];
-  byId('draw-coupon').textContent = 'Mais um bilhetinho ↻';
-  celebrate();
-});
+  byId('pair-message').textContent = `${foundPairs} de 3 pares · Essas são de momentos diferentes. Tenta mais uma vez, meu amor.`;
+  pairTimeout = setTimeout(() => {
+    revealPairCard(previousCard, false);
+    revealPairCard(card, false);
+    pairTimeout = null;
+  }, 1100);
+}
+function resetPairGame() {
+  clearTimeout(pairTimeout);
+  pairTimeout = null;
+  firstPairCard = null;
+  foundPairs = 0;
+  pairAttempts = 0;
+  const photoChoices = [...new Set([...specialMoments.slice(0, 3), ...albumOrder])].slice(0, 3);
+  const deck = [...photoChoices, ...photoChoices];
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  pairBoard.replaceChildren();
+  deck.forEach((index, slot) => {
+    const card = document.createElement('button');
+    card.type = 'button'; card.className = 'pair-tile';
+    card.dataset.memory = index; card.dataset.slot = slot + 1;
+    const image = document.createElement('img');
+    image.src = thumbnails[index].src; image.alt = ''; image.hidden = true;
+    image.loading = 'lazy'; image.decoding = 'async';
+    const heart = document.createElement('span'); heart.textContent = '♡'; heart.setAttribute('aria-hidden', 'true');
+    card.append(image, heart);
+    revealPairCard(card, false);
+    card.addEventListener('click', () => choosePairCard(card));
+    pairBoard.appendChild(card);
+  });
+  byId('pair-message').textContent = '0 de 3 pares · Vira duas cartinhas pra começar. ♡';
+}
+byId('restart-pairs').addEventListener('click', resetPairGame);
+resetPairGame();
 const flowerPetals = [...document.querySelectorAll('.flower-petal')];
 const flowerMessages = ['Bem-me-quer…', 'Me quer MUITO bem.', 'Bem-me-quer de novo…', 'Me quer até nos dias de cabelo bagunçado.', 'Bem-me-quer mais um pouquinho…', 'Pegadinha: aqui só tem bem-me-quer. Eu te amo, Nicolly! ♡'];
 let pickedPetals = 0;
