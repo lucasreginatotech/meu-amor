@@ -71,9 +71,9 @@ function showLove(title, paragraphs, signature = 'Com amor, de quem te escolheri
 function openLetter() { showLove('Nicolly, meu amor,', [
   'Você é a mulher da minha vida. E eu queria que esse cantinho conseguisse te mostrar, nem que fosse um pouquinho, o tamanho do que eu sinto por você.',
   'Olho pra nossa primeira foto, pro nosso primeiro beijo registrado, pro dia das alianças… e vejo muito mais que imagens. Vejo o nosso começo, as nossas escolhas e todas as pequenas coisas que foram virando uma história tão nossa.',
-  'Eu amo as nossas bobeiras, as caretas, os passeios e os abraços. Amo dividir um dia comum com você. A foto na escola, o cinema, o buquê: são jeitos diferentes de guardar a mesma certeza. É você que eu quero do meu lado.',
+  'Eu amo as nossas bobeiras, as caretas, os passeios e os abraços. Amo dividir um dia comum com você. As fotos na escola, os cinemas, o buquê: são jeitos diferentes de guardar a mesma certeza. É você que eu quero do meu lado.',
   'Não prometo dias perfeitos. Prometo carinho, parceria, escuta e vontade de cuidar da gente. Quero continuar te escolhendo nos dias leves e estar perto nos dias difíceis.',
-  'Essas fotos são um pedacinho do que já vivemos. O resto? Eu quero viver com você. Que venham muitos outros sorrisos, beijos, planos e fotos sem pose. Eu te amo demais, Nicolly. ♥'
+  'Essas fotos são um pedacinho do que já vivemos. O resto? Eu quero viver com você. Que venham muitos outros sorrisos, beijos, planos e fotos sem pose. Eu te amo demais, Nicolly. ♥ meu xuxupi. E que a gente continue escrevendo a nossa história, com muito amor, cuidado e cumplicidade.'
 ], 'Com todo o meu amor. Hoje e em todos os nossos ainda.'); }
 byId('open-letter').addEventListener('click', openLetter);
 byId('quote-letter').addEventListener('click', openLetter);
@@ -146,6 +146,61 @@ byId('secret-heart').addEventListener('click', () => {
     showLove('Você achou meu segredo!', ['Vale um abraço bem demorado, um beijo na testa e um “te amo” olhando nos olhos.', 'Para resgatar, é só me mostrar essa mensagem. Validade: sempre que você precisar de carinho.'], 'Um vale-carinho, exclusivo para Nicolly.');
     celebrate(true);
   }
+});
+const littleNotes = {
+  saudade: 'Se eu pudesse, saía dessa telinha só pra te abraçar. Enquanto isso, guarda esse lembrete: tem alguém aqui contando os minutos pra ficar pertinho de você, Nicolly. ♡',
+  cansada: 'Meu amor, você não precisa dar conta de tudo hoje. Respira um pouquinho. Quero te ouvir, fazer um carinho e ser companhia até o dia ficar mais leve.',
+  feliz: 'Esse seu sorriso é meu acontecimento favorito. Se o dia tá bonito aí, ficou bonito aqui também. Me conta tudo depois? Quero colecionar suas alegrias com você.'
+};
+document.querySelectorAll('[data-love-note]').forEach((button) => {
+  button.addEventListener('click', () => {
+    byId('little-note').textContent = littleNotes[button.dataset.loveNote];
+    document.querySelectorAll('[data-love-note]').forEach((option) => option.setAttribute('aria-pressed', String(option === button)));
+  });
+});
+const affectionCoupons = [
+  ['Um abraço sem pressa', 'Daqueles em que a gente esquece o relógio e fica só mais um pouquinho.'],
+  ['Cinema com seu par favorito', 'Você escolhe o filme. Eu cuido da companhia e divido a pipoca.'],
+  ['Um encontro pra chamar de nosso', 'Vamos escolher juntos um lugar e arrumar mais uma lembrança boa pro álbum.'],
+  ['Beijo na testa + cafuné', 'Um combo de carinho pra deixar um dia comum mais gostoso.'],
+  ['Uma foto bem boba juntos', 'Vale careta, risada e uma tentativa fracassada de fazer pose séria.'],
+  ['Você escolhe a próxima música', 'Eu fico com a melhor parte: ouvir juntinho de você.'],
+  ['Um passeio de mãos dadas', 'Sem roteiro complicado. Um tempinho só pra conversar e estar perto.'],
+  ['Seu pedido de carinho', 'Me conta um carinho que você gostaria de receber e a gente combina. ♡']
+];
+let couponBag = [];
+let lastCoupon = -1;
+byId('draw-coupon').addEventListener('click', () => {
+  if (!couponBag.length) {
+    couponBag = affectionCoupons.map((_, index) => index);
+    for (let i = couponBag.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [couponBag[i], couponBag[j]] = [couponBag[j], couponBag[i]];
+    }
+    if (couponBag[couponBag.length - 1] === lastCoupon) [couponBag[0], couponBag[couponBag.length - 1]] = [couponBag[couponBag.length - 1], couponBag[0]];
+  }
+  lastCoupon = couponBag.pop();
+  byId('coupon-title').textContent = affectionCoupons[lastCoupon][0];
+  byId('coupon-description').textContent = affectionCoupons[lastCoupon][1];
+  byId('draw-coupon').textContent = 'Mais um bilhetinho ↻';
+  celebrate();
+});
+const flowerPetals = [...document.querySelectorAll('.flower-petal')];
+const flowerMessages = ['Bem-me-quer…', 'Me quer MUITO bem.', 'Bem-me-quer de novo…', 'Me quer até nos dias de cabelo bagunçado.', 'Bem-me-quer mais um pouquinho…', 'Pegadinha: aqui só tem bem-me-quer. Eu te amo, Nicolly! ♡'];
+let pickedPetals = 0;
+byId('pluck-petal').addEventListener('click', () => {
+  if (pickedPetals === flowerPetals.length) {
+    pickedPetals = 0;
+    flowerPetals.forEach((petal) => petal.classList.remove('picked'));
+    byId('flower-message').textContent = 'Outra flor. A mesma certeza. ♡';
+    byId('pluck-petal').textContent = 'Tirar uma pétala · 1 de 6';
+    return;
+  }
+  flowerPetals[pickedPetals].classList.add('picked');
+  byId('flower-message').textContent = flowerMessages[pickedPetals];
+  pickedPetals++;
+  byId('pluck-petal').textContent = pickedPetals === flowerPetals.length ? 'Plantar outra flor ↻' : `Tirar uma pétala · ${pickedPetals + 1} de 6`;
+  if (pickedPetals === flowerPetals.length) celebrate(true);
 });
 const photoDialog = byId('photo-dialog');
 let photoIndex = 0;
