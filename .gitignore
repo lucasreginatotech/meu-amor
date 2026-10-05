@@ -1,0 +1,6 @@
+﻿.qa*
+qa-output.txt
+qa-errors.txt
+preview-*.png
+.DS_Store
+Thumbs.db
